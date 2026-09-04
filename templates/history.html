@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Query Resolution History{% endblock %}
+{% block breadcrumb %}Query History{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Page Header -->
+    <div class="page-header-row">
+        <div>
+            <div class="hero-badge">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>SQLITE AUDIT LOGS</span>
+            </div>
+            <h1 class="page-title">Student Query History</h1>
+            <p class="page-subtitle">
+                Inspect past student queries, AI agent reasoning decisions, retrieved documents, relevance scores, and generated answers.
+            </p>
+        </div>
+        <div class="page-actions">
+            {% if history %}
+                <form method="POST" action="{{ url_for('handle_clear_history') }}" onsubmit="return confirm('Are you sure you want to clear all query history records?');">
+                    <button type="submit" class="btn btn-danger-outline btn-sm">
+                        <i class="fa-solid fa-trash-can"></i>
+                        <span>Clear History</span>
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Filter & Search Bar -->
+    <div class="filter-bar-card">
+        <form method="GET" action="{{ url_for('history') }}" class="filter-form">
+            <div class="search-input-wrap">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input 
+                    type="text" 
+                    name="search" 
+                    placeholder="Search queries, documents, or responses..." 
+                    value="{{ search_query }}"
+                >
+            </div>
+
+            <div class="category-filter-wrap">
+                <label for="catFilter">Category:</label>
+                <select id="catFilter" name="category" onchange="this.form.submit()">
+                    <option value="all" {% if current_category == 'all' %}selected{% endif %}>All Categories</option>
+                    <option value="Attendance" {% if current_category == 'Attendance' %}selected{% endif %}>Attendance</option>
+                    <option value="Examination" {% if current_category == 'Examination' %}selected{% endif %}>Examination</option>
+                    <option value="Fees" {% if current_category == 'Fees' %}selected{% endif %}>Fees</option>
+                    <option value="Academic" {% if current_category == 'Academic' %}selected{% endif %}>Academic</option>
+                    <option value="Course Information" {% if current_category == 'Course Information' %}selected{% endif %}>Course Information</option>
+                    <option value="Admission" {% if current_category == 'Admission' %}selected{% endif %}>Admission</option>
+                    <option value="General" {% if current_category == 'General' %}selected{% endif %}>General</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+            {% if search_query or (current_category and current_category != 'all') %}
+                <a href="{{ url_for('history') }}" class="btn btn-secondary btn-sm">Reset</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- History List / Cards -->
+    {% if history %}
+        <div class="history-cards-list">
+            {% for item in history %}
+                <div class="history-item-card">
+                    <div class="history-header">
+                        <div class="h-left">
+                            <span class="category-badge-sm">{{ item.query_category }}</span>
+                            <span class="h-query-id"><i class="fa-solid fa-fingerprint"></i> {{ item.query_id }}</span>
+                        </div>
+                        <div class="h-right">
+                            <span class="h-time"><i class="fa-regular fa-clock"></i> {{ item.timestamp }}</span>
+                            <span class="meta-tag"><i class="fa-solid fa-bolt"></i> {{ item.latency_ms }} ms</span>
+                        </div>
+                    </div>
+
+                    <div class="history-body">
+                        <div class="h-query-block">
+                            <span class="h-label">STUDENT QUERY:</span>
+                            <p class="h-query-text">"{{ item.student_query }}"</p>
+                        </div>
+
+                        <div class="h-retrieval-summary">
+                            <div class="h-doc-chip">
+                                <i class="fa-regular fa-file-lines text-blue"></i>
+                                <span>{{ item.retrieved_document }}</span>
+                            </div>
+                            <div class="h-score-chip">
+                                <i class="fa-solid fa-bullseye text-green"></i>
+                                <span>Relevance: <strong>{{ item.relevance_score }}%</strong></span>
+                            </div>
+                            {% if item.is_fallback %}
+                                <span class="badge-fallback">Fallback RAG</span>
+                            {% else %}
+                                <span class="badge-gemini">Gemini API</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="h-response-block">
+                            <span class="h-label">AI RESOLUTION:</span>
+                            <div class="h-response-text">{{ item.generated_response|truncate(260)|replace('\n', '<br>')|safe }}</div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state-card">
+            <div class="empty-icon"><i class="fa-solid fa-inbox"></i></div>
+            <h3>No Query History Found</h3>
+            <p>
+                {% if search_query or current_category != 'all' %}
+                    No logged queries match your current search filters.
+                {% else %}
+                    You have not submitted any questions yet. Head to the Dashboard to test queries!
+                {% endif %}
+            </p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Go to Dashboard</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

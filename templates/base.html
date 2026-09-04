@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Smart University Academic Assistant{% endblock %} — AI Capstone</title>
+    <meta name="description" content="AI-Powered Smart University Academic Assistant using AI Agents for Student Query Resolution and Document Retrieval with Generative AI RAG.">
+    
+    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons for clean SaaS graphics -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Custom Light Theme CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="light-theme">
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <div class="brand-icon-box">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div class="brand-text">
+                        <h2>Smart University</h2>
+                        <span class="brand-subtitle">AI Academic Assistant</span>
+                    </div>
+                </div>
+                <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close sidebar">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="sidebar-version-pill">
+                <span class="pulse-indicator"></span>
+                <span>AI Agent Engine Active</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">MAIN NAVIGATION</div>
+                
+                <a href="{{ url_for('index') }}" class="nav-item {% if active_page == 'dashboard' %}active{% endif %}" id="nav-dashboard">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Dashboard</span>
+                </a>
+                
+                <a href="{{ url_for('index') }}#query-section" class="nav-item" id="nav-ask">
+                    <i class="fa-solid fa-comment-dots"></i>
+                    <span>Ask Assistant</span>
+                    <span class="badge-accent">Live</span>
+                </a>
+                
+                <a href="{{ url_for('index') }}#agent-activity" class="nav-item" id="nav-agent">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>AI Agent Activity</span>
+                </a>
+                
+                <div class="nav-section-title">KNOWLEDGE & DATA</div>
+                
+                <a href="{{ url_for('knowledge_base') }}" class="nav-item {% if active_page == 'knowledge_base' %}active{% endif %}" id="nav-kb">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>Knowledge Base</span>
+                    <span class="badge-pill">{{ total_kb_docs }} Docs</span>
+                </a>
+                
+                <a href="{{ url_for('history') }}" class="nav-item {% if active_page == 'history' %}active{% endif %}" id="nav-history">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Query History</span>
+                </a>
+                
+                <div class="nav-section-title">DOCUMENTATION</div>
+                
+                <a href="{{ url_for('about') }}" class="nav-item {% if active_page == 'about' %}active{% endif %}" id="nav-about">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>About & Architecture</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="ai-status-card">
+                    <div class="status-top">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Generative AI RAG</span>
+                    </div>
+                    <p class="status-detail">
+                        {% if has_gemini_key %}
+                        <span class="text-success"><i class="fa-solid fa-check"></i> Gemini API Online</span>
+                        {% else %}
+                        <span class="text-indigo"><i class="fa-solid fa-circle-nodes"></i> Smart RAG Fallback</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="app-main-wrapper">
+            <!-- Top Navbar -->
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="mobile-toggle-btn" id="sidebarOpenBtn" aria-label="Open sidebar">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="breadcrumbs">
+                        <span class="bc-root">Smart University</span>
+                        <i class="fa-solid fa-chevron-right bc-sep"></i>
+                        <span class="bc-current">{% block breadcrumb %}Dashboard{% endblock %}</span>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <div class="system-status-pills">
+                        <div class="status-pill" title="AI Agent Status">
+                            <span class="pill-dot green"></span>
+                            <span class="pill-text">Agent Online</span>
+                        </div>
+                        <div class="status-pill" title="RAG Vector Engine">
+                            <span class="pill-dot blue"></span>
+                            <span class="pill-text">Vector RAG Ready</span>
+                        </div>
+                        <div class="status-pill highlight" title="Academic Year">
+                            <i class="fa-regular fa-calendar-check"></i>
+                            <span class="pill-text">AY 2026-27</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="toast-alerts-container">
+                        {% for category, message in messages %}
+                            <div class="toast-alert alert-{{ category }}">
+                                <i class="fa-solid {% if category == 'error' %}fa-triangle-exclamation{% elif category == 'success' %}fa-circle-check{% else %}fa-circle-info{% endif %}"></i>
+                                <div class="toast-text">{{ message }}</div>
+                                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Dynamic Body Content -->
+            <main class="app-content-body">
+                {% block content %}{% endblock %}
+            </main>
+
+            <!-- Light Footer -->
+            <footer class="app-footer">
+                <div class="footer-content">
+                    <div class="footer-left">
+                        <p>© 2026 Smart University Academic Assistant • GenAI Capstone Project</p>
+                    </div>
+                    <div class="footer-right">
+                        <span class="badge-tech">Flask</span>
+                        <span class="badge-tech">TF-IDF Vector RAG</span>
+                        <span class="badge-tech">Autonomous AI Agent</span>
+                        <span class="badge-tech">SQLite</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Global Document Viewer Modal -->
+    <div class="modal-overlay" id="docModal" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <i class="fa-regular fa-file-lines"></i>
+                    <h3 id="modalDocTitle">Document Title</h3>
+                </div>
+                <button class="modal-close-btn" id="closeDocModalBtn">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-meta-row">
+                    <span class="modal-badge" id="modalDocCategory">Category</span>
+                    <span class="modal-badge-info" id="modalDocFilename">filename.txt</span>
+                </div>
+                <pre class="modal-code-viewer" id="modalDocContent">Loading document text...</pre>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="closeDocModalFooterBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

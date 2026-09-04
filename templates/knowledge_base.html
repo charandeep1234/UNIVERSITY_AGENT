@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Knowledge Base Management{% endblock %}
+{% block breadcrumb %}Knowledge Base{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Header Section -->
+    <div class="page-header-row">
+        <div>
+            <div class="hero-badge">
+                <i class="fa-solid fa-book-bookmark"></i>
+                <span>MODULE 4 • KNOWLEDGE BASE</span>
+            </div>
+            <h1 class="page-title">University Knowledge Base</h1>
+            <p class="page-subtitle">
+                Manage, add, and index official university policies, regulations, and academic guides used for AI document retrieval and RAG.
+            </p>
+        </div>
+        <div class="page-actions">
+            <form method="POST" action="{{ url_for('handle_refresh_knowledge_base') }}" id="refreshKbForm">
+                <button type="submit" class="btn btn-secondary" id="refreshKbBtn">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                    <span>↻ Refresh Knowledge Base</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Knowledge Base Stats -->
+    <div class="stats-grid mb-6">
+        <div class="stat-card">
+            <div class="stat-icon blue"><i class="fa-solid fa-folder-open"></i></div>
+            <div class="stat-info">
+                <span class="stat-label">Active Documents</span>
+                <strong class="stat-value">{{ stats.total_documents }}</strong>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon purple"><i class="fa-solid fa-cubes-stacked"></i></div>
+            <div class="stat-info">
+                <span class="stat-label">Semantic Text Chunks</span>
+                <strong class="stat-value">{{ stats.total_chunks }}</strong>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="fa-solid fa-network-wired"></i></div>
+            <div class="stat-info">
+                <span class="stat-label">Vector Retrieval Engine</span>
+                <strong class="stat-value">TF-IDF / Cosine Ready</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2-Column Split: Add New Knowledge Form & Document Catalog -->
+    <div class="kb-split-layout">
+        <!-- Left: Add New Knowledge Form -->
+        <div class="kb-form-column">
+            <div class="standard-card">
+                <div class="card-header-clean">
+                    <div class="header-left">
+                        <span class="mod-icon indigo"><i class="fa-solid fa-file-circle-plus"></i></span>
+                        <div>
+                            <h3 class="card-title">ADD NEW KNOWLEDGE</h3>
+                            <p class="card-caption">Ingest a new academic policy or document</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ url_for('handle_add_document') }}" class="add-doc-form" id="addDocForm">
+                    <div class="form-group">
+                        <label for="docTitle">Document Title <span class="req">*</span></label>
+                        <input 
+                            type="text" 
+                            id="docTitle" 
+                            name="title" 
+                            placeholder="e.g., Hostel Regulations & Curfew Policy" 
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="docCategory">Academic Category <span class="req">*</span></label>
+                        <select id="docCategory" name="category" required>
+                            <option value="Attendance">Attendance</option>
+                            <option value="Examination">Examination</option>
+                            <option value="Fees">Fees</option>
+                            <option value="Academic">Academic</option>
+                            <option value="Course Information">Course Information</option>
+                            <option value="Admission">Admission</option>
+                            <option value="General" selected>General Policy</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="docContent">Document Content <span class="req">*</span></label>
+                        <textarea 
+                            id="docContent" 
+                            name="content" 
+                            rows="9" 
+                            placeholder="Enter the official text, policies, regulations, and details for this document..." 
+                            required
+                        ></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" id="addDocSubmitBtn">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>[ Add Knowledge ]</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right: Current Documents Catalog -->
+        <div class="kb-catalog-column">
+            <div class="catalog-header">
+                <h3>Available University Documents ({{ documents|length }})</h3>
+                <span class="catalog-sub">Click on any document card to preview full verified content</span>
+            </div>
+
+            <div class="documents-grid">
+                {% for doc in documents %}
+                    <div class="doc-card" onclick="openDocModal('{{ doc.filename }}')">
+                        <div class="doc-card-top">
+                            <div class="doc-card-title-wrap">
+                                <span class="doc-file-type-icon"><i class="fa-regular fa-file-lines"></i></span>
+                                <div>
+                                    <h4 class="doc-card-title">{{ doc.title }}</h4>
+                                    <span class="doc-card-file">{{ doc.filename }}</span>
+                                </div>
+                            </div>
+                            <span class="category-badge-sm">{{ doc.category }}</span>
+                        </div>
+
+                        <p class="doc-card-desc">{{ doc.description }}</p>
+
+                        <div class="doc-card-footer">
+                            <span class="doc-meta-item"><i class="fa-solid fa-align-left"></i> {{ doc.word_count }} words</span>
+                            <span class="doc-meta-item"><i class="fa-regular fa-clock"></i> {{ doc.last_modified }}</span>
+                            <button type="button" class="btn-text-link" onclick="event.stopPropagation(); openDocModal('{{ doc.filename }}')">
+                                View File →
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

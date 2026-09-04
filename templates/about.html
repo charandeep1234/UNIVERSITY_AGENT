@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}About & Architecture Guide{% endblock %}
+{% block breadcrumb %}About & Architecture{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Header -->
+    <div class="page-header-row">
+        <div>
+            <div class="hero-badge">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>PROJECT DOCUMENTATION & SYSTEM ARCHITECTURE</span>
+            </div>
+            <h1 class="page-title">Smart University Academic Assistant</h1>
+            <p class="page-subtitle">
+                Comprehensive explanation of the five core modules, autonomous AI Agent cognitive pipeline, and RAG architecture.
+            </p>
+        </div>
+    </div>
+
+    <!-- Complete End-to-End Workflow Architecture Diagram -->
+    <div class="workflow-diagram-card">
+        <div class="diag-header">
+            <h3><i class="fa-solid fa-diagram-project"></i> End-to-End System Workflow</h3>
+            <span class="diag-badge">RAG + AI Agent Pipeline</span>
+        </div>
+        
+        <div class="architecture-flow-wrapper">
+            <div class="flow-step">
+                <div class="flow-icon purple"><i class="fa-solid fa-keyboard"></i></div>
+                <div class="flow-title">1. Student Query</div>
+                <div class="flow-sub">Natural language question</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+                <div class="flow-icon indigo"><i class="fa-solid fa-filter"></i></div>
+                <div class="flow-title">2. Query Processing</div>
+                <div class="flow-sub">Clean, normalize & classify</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+                <div class="flow-icon blue"><i class="fa-solid fa-robot"></i></div>
+                <div class="flow-title">3. Query Agent</div>
+                <div class="flow-sub">Cognitive decision engine</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+                <div class="flow-icon teal"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+                <div class="flow-title">4. Document Retrieval</div>
+                <div class="flow-sub">TF-IDF / Vector similarity</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+                <div class="flow-icon green"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <div class="flow-title">5. Generative AI / RAG</div>
+                <div class="flow-sub">Gemini or Local Synthesizer</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+                <div class="flow-icon purple"><i class="fa-solid fa-comment-check"></i></div>
+                <div class="flow-title">6. Student Response</div>
+                <div class="flow-sub">Verified grounded answer</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- The 5 Core Modules In-Depth Breakdown -->
+    <div class="modules-breakdown-section">
+        <h2 class="section-heading mb-4"><i class="fa-solid fa-cubes"></i> The Five Capstone Modules</h2>
+
+        <div class="module-deepdive-grid">
+            <!-- Module 1 -->
+            <div class="deepdive-card">
+                <div class="deepdive-header">
+                    <span class="module-num-badge">MODULE 1</span>
+                    <h3>Student Query Processing</h3>
+                </div>
+                <div class="deepdive-body">
+                    <p class="deepdive-lead">Responsible for input ingestion, data hygiene, linguistic normalization, and intent classification.</p>
+                    <ul class="deepdive-list">
+                        <li><strong>Input Validation:</strong> Prevents empty or malformed strings with actionable student prompts.</li>
+                        <li><strong>Text Normalization:</strong> Strips noise, converts character encodings, and extracts informative domain keywords.</li>
+                        <li><strong>Query Classification:</strong> Accurately routes questions into 7 categories (<code>Attendance</code>, <code>Examination</code>, <code>Fees</code>, <code>Academic</code>, <code>Course Information</code>, <code>Admission</code>, <code>General</code>).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Module 2 -->
+            <div class="deepdive-card">
+                <div class="deepdive-header">
+                    <span class="module-num-badge">MODULE 2</span>
+                    <h3>AI Agent-Based Query Resolution</h3>
+                </div>
+                <div class="deepdive-body">
+                    <p class="deepdive-lead">The central autonomous intelligence coordinator named <strong>University Query Agent</strong>.</p>
+                    <ul class="deepdive-list">
+                        <li><strong>Decision Engine:</strong> Analyzes query taxonomy and decides whether knowledge base retrieval or direct answering is optimal.</li>
+                        <li><strong>Transparent Cognitive Steps:</strong> Exposes a 7-stage live telemetry trail (Received → Cleaned → Classified → Decided → Searched → Generated → Ready).</li>
+                        <li><strong>Audit Logging:</strong> Automatically stores all resolution telemetry, latencies, and match scores in SQLite.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Module 3 -->
+            <div class="deepdive-card">
+                <div class="deepdive-header">
+                    <span class="module-num-badge">MODULE 3</span>
+                    <h3>Academic Document Retrieval</h3>
+                </div>
+                <div class="deepdive-body">
+                    <p class="deepdive-lead">Semantic vector search pipeline executing Retrieval-Augmented Generation (RAG).</p>
+                    <ul class="deepdive-list">
+                        <li><strong>Document Chunking:</strong> Partitions raw policy files into semantic paragraph chunks with sliding overlap.</li>
+                        <li><strong>Vector Similarity:</strong> Converts chunks into high-dimensional TF-IDF vectors and computes Cosine Similarities against incoming student queries.</li>
+                        <li><strong>Relevance Scoring:</strong> Returns calibrated similarity percentages (e.g. 92%) and pinpoint context chunks.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Module 4 -->
+            <div class="deepdive-card">
+                <div class="deepdive-header">
+                    <span class="module-num-badge">MODULE 4</span>
+                    <h3>Knowledge Base Management</h3>
+                </div>
+                <div class="deepdive-body">
+                    <p class="deepdive-lead">Dynamic document catalog and ingestion management system.</p>
+                    <ul class="deepdive-list">
+                        <li><strong>Verified Academic Sources:</strong> Houses official attendance rules, exam guidelines, academic calendar, fee schedules, courses, and admissions.</li>
+                        <li><strong>Dynamic Ingestion:</strong> Administrators can add new documents via web form, instantly saving and vector-indexing them.</li>
+                        <li><strong>Index Refresh:</strong> Re-indexes files at runtime without requiring server restarts.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Module 5 -->
+            <div class="deepdive-card">
+                <div class="deepdive-header">
+                    <span class="module-num-badge">MODULE 5</span>
+                    <h3>User Interface and Response Delivery</h3>
+                </div>
+                <div class="deepdive-body">
+                    <p class="deepdive-lead">Modern SaaS-styled light interface delivering transparent module-by-module results.</p>
+                    <ul class="deepdive-list">
+                        <li><strong>Modern Light Aesthetic:</strong> Bright, clean, and accessible UI with subtle shadows, crisp cards, and indigo accents.</li>
+                        <li><strong>Live Agent Animation:</strong> Visualizes the step-by-step reasoning cycle during query resolution.</li>
+                        <li><strong>Module Breakdown Cards:</strong> Clearly renders category, retrieved file, relevance score, context snippet, and the final response.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

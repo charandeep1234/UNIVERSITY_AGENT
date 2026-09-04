@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+
+{% block title %}Academic Assistant & AI Agent Dashboard{% endblock %}
+{% block breadcrumb %}Dashboard & Assistant{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Hero Banner -->
+    <section class="hero-section">
+        <div class="hero-badge">
+            <i class="fa-solid fa-sparkles"></i>
+            <span>SMART UNIVERSITY AI • V1.0</span>
+        </div>
+        <h1 class="hero-title">
+            Your academic questions, <br>
+            <span class="gradient-text">answered intelligently.</span>
+        </h1>
+        <p class="hero-subtitle">
+            Ask questions about attendance rules, examination schedules, fee payments, degree courses, admission requirements, and university policies.
+        </p>
+    </section>
+
+    <!-- Interactive Query Input Card -->
+    <section class="query-card-section" id="query-section">
+        <div class="query-card">
+            <div class="card-header-clean">
+                <div class="header-left">
+                    <span class="header-icon-ai"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                    <div>
+                        <h3 class="card-title">NEW ACADEMIC QUERY</h3>
+                        <p class="card-caption">What would you like to understand today?</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <span class="agent-tag"><i class="fa-solid fa-robot"></i> University Query Agent</span>
+                </div>
+            </div>
+
+            <form id="queryForm" class="query-form" method="POST" action="{{ url_for('ask') }}">
+                <div class="textarea-wrapper">
+                    <textarea 
+                        id="queryInput" 
+                        name="query" 
+                        rows="3" 
+                        placeholder="Ask about attendance, examinations, fees, courses, university policies and more..."
+                        required
+                    >{{ initial_query if initial_query else '' }}</textarea>
+                    
+                    <div class="textarea-actions">
+                        <button type="button" class="btn-icon" id="clearQueryBtn" title="Clear query">
+                            <i class="fa-solid fa-eraser"></i>
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-submit-query" id="submitQueryBtn">
+                            <span class="btn-text">Ask Assistant</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Suggestion Chips -->
+            <div class="suggestion-chips-wrapper">
+                <span class="chips-label"><i class="fa-regular fa-lightbulb"></i> Suggested Questions:</span>
+                <div class="chips-list">
+                    {% for q in sample_questions %}
+                        <button type="button" class="suggestion-chip" data-question="{{ q }}">
+                            <span>{{ q }}</span>
+                        </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Step-by-Step AI Agent Workflow Tracker -->
+    <section class="agent-workflow-section" id="agent-activity" style="{% if not result %}display: none;{% endif %}">
+        <div class="section-header-row">
+            <div class="section-title-wrap">
+                <span class="step-badge-indicator">MODULE 2</span>
+                <h2>AI Agent Processing Pipeline</h2>
+            </div>
+            <div class="workflow-status-pill" id="agentWorkflowStatus">
+                <i class="fa-solid fa-circle-check text-success"></i>
+                <span>Execution Complete</span>
+            </div>
+        </div>
+
+        <div class="agent-steps-timeline" id="agentTimeline">
+            {% if result and result.steps %}
+                {% for step in result.steps %}
+                    <div class="step-card step-completed" id="step-node-{{ step.step_num }}">
+                        <div class="step-icon-col">
+                            <div class="step-number">{{ step.step_num }}</div>
+                            <div class="step-line"></div>
+                        </div>
+                        <div class="step-content-col">
+                            <div class="step-title-row">
+                                <h4 class="step-title">{{ step.name }}</h4>
+                                <span class="step-status-tag"><i class="fa-solid fa-check"></i> Completed</span>
+                            </div>
+                            <p class="step-desc">{{ step.description }}</p>
+                            {% if step.detail %}
+                                <div class="step-detail-box">{{ step.detail }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <!-- Dynamic Steps Placeholder for AJAX Live Rendering -->
+                <div class="step-card" id="step-node-1">
+                    <div class="step-icon-col"><div class="step-number">1</div><div class="step-line"></div></div>
+                    <div class="step-content-col"><h4 class="step-title">Query Received</h4><p class="step-desc">Accepting raw student query</p></div>
+                </div>
+                <div class="step-card" id="step-node-2">
+                    <div class="step-icon-col"><div class="step-number">2</div><div class="step-line"></div></div>
+                    <div class="step-content-col"><h4 class="step-title">Understanding Query</h4><p class="step-desc">Cleaning text & keyword normalization</p></div>
+                </div>
+                <div class="step-card" id="step-node-3">
+                    <div class="step-icon-col"><div class="step-number">3</div><div class="step-line"></div></div>
+                    <div class="step-content-col"><h4 class="step-title">Classifying Request</h4><p class="step-desc">Identifying academic domain category</p></div>
+                </div>
+                <div class="step-card" id="step-node-4">
+                    <div class="step-icon-col"><div class="step-number">4</div><div class="step-line"></div></div>
+                    <div class="step-content-col"><h4 class="step-title">Deciding Agent Action</h4><p class="step-desc">Selecting knowledge base retrieval strategy</p></div>
+                </div>
+                <div class="step-card" id="step-node-5">
+                    <div class="step-icon-col"><div class="step-number">5</div><div class="step-line"></div></div>
+                    <div class="step-content-col"><h4 class="step-title">Searching Knowledge Base</h4><p class="step-desc">Vector semantic search & context retrieval</p></div>
+                </div>
+                <div class="step-card" id="step-node-6">
+                    <div class="step-icon-col"><div class="step-number">6</div><div class="step-line"></div></div>
+                    <div class="step-content-col"><h4 class="step-title">Generating AI Response</h4><p class="step-desc">Generative AI / Grounded RAG synthesis</p></div>
+                </div>
+                <div class="step-card" id="step-node-7">
+                    <div class="step-icon-col"><div class="step-number">7</div></div>
+                    <div class="step-content-col"><h4 class="step-title">Response Ready</h4><p class="step-desc">Final student-friendly response delivered</p></div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Comprehensive Module Output Cards Section -->
+    <section class="module-results-section" id="resultsSection" style="{% if not result %}display: none;{% endif %}">
+        <div class="section-header-row">
+            <div class="section-title-wrap">
+                <span class="step-badge-indicator">CAPSTONE VERIFICATION</span>
+                <h2>Module Resolution Outputs</h2>
+            </div>
+            <div class="results-meta" id="resultsMeta">
+                {% if result %}
+                    <span class="meta-tag"><i class="fa-regular fa-clock"></i> {{ result.latency_ms }} ms</span>
+                    <span class="meta-tag"><i class="fa-solid fa-fingerprint"></i> {{ result.query_id }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 2-Column Grid for Module 1, 2, 3 Outputs -->
+        <div class="modules-grid">
+            <!-- Module 1 Output: Category Card -->
+            <div class="module-card">
+                <div class="module-card-header">
+                    <div class="mod-hdr-left">
+                        <span class="mod-icon purple"><i class="fa-solid fa-tags"></i></span>
+                        <div>
+                            <span class="mod-label">MODULE 1 • QUERY PROCESSING</span>
+                            <h4 class="mod-heading">Detected Category</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="module-card-body">
+                    <div class="category-display-box">
+                        <span class="category-pill-large" id="resCategory">
+                            {{ result.category if result else 'General' }}
+                        </span>
+                        <div class="confidence-meter-wrap">
+                            <div class="confidence-labels">
+                                <span>Classification Confidence</span>
+                                <strong id="resConfidence">{% if result %}{{ (result.confidence * 100)|int }}%{% else %}95%{% endif %}</strong>
+                            </div>
+                            <div class="progress-bar-track">
+                                <div class="progress-bar-fill purple" id="resConfidenceBar" style="width: {% if result %}{{ (result.confidence * 100)|int }}%{% else %}95%{% endif %};"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 3 Output: Retrieved Document Card -->
+            <div class="module-card">
+                <div class="module-card-header">
+                    <div class="mod-hdr-left">
+                        <span class="mod-icon blue"><i class="fa-regular fa-file-lines"></i></span>
+                        <div>
+                            <span class="mod-label">MODULE 3 • DOCUMENT RETRIEVAL</span>
+                            <h4 class="mod-heading">Retrieved Academic Source</h4>
+                        </div>
+                    </div>
+                    <button class="btn-xs-outline" id="viewSourceDocBtn" onclick="openDocModal(document.getElementById('resRetrievedDoc').innerText)">
+                        <i class="fa-regular fa-eye"></i> View Full File
+                    </button>
+                </div>
+                <div class="module-card-body">
+                    <div class="retrieval-display-box">
+                        <div class="doc-match-row">
+                            <i class="fa-solid fa-file-lines doc-file-icon"></i>
+                            <div class="doc-match-info">
+                                <strong class="doc-name" id="resRetrievedDoc">{{ result.retrieved_document if result else 'None' }}</strong>
+                                <span class="doc-status">Primary RAG Knowledge Source</span>
+                            </div>
+                        </div>
+                        <div class="confidence-meter-wrap">
+                            <div class="confidence-labels">
+                                <span>Semantic Relevance Score</span>
+                                <strong id="resRelevanceScore" class="text-blue">{% if result %}{{ result.relevance_score }}%{% else %}92.0%{% endif %}</strong>
+                            </div>
+                            <div class="progress-bar-track">
+                                <div class="progress-bar-fill blue" id="resRelevanceBar" style="width: {% if result %}{{ result.relevance_score }}%{% else %}92%{% endif %};"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Retrieved Context Card -->
+        <div class="context-card">
+            <div class="context-header">
+                <div class="mod-hdr-left">
+                    <span class="mod-icon green"><i class="fa-solid fa-quote-left"></i></span>
+                    <div>
+                        <span class="mod-label">MODULE 3 • SEMANTIC CHUNK MATCH</span>
+                        <h4 class="mod-heading">Relevant Document Context (RAG Input)</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="context-body">
+                <div class="context-quote-box" id="resContext">
+                    {{ result.relevant_context if result else 'No context retrieved yet.' }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Final AI Assistant Response Card (Prominent Highlight) -->
+        <div class="ai-response-card" id="finalAiCard">
+            <div class="ai-card-glow"></div>
+            <div class="ai-response-header">
+                <div class="ai-agent-identity">
+                    <div class="ai-avatar">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <div class="ai-title-row">
+                            <h3>✦ UNIVERSITY AI ASSISTANT</h3>
+                            <span class="model-badge" id="resModelName">
+                                {{ result.model_name if result else 'Generative AI Grounded Response' }}
+                            </span>
+                        </div>
+                        <p class="ai-subtitle">Verified answer synthesized strictly from university documents</p>
+                    </div>
+                </div>
+                <div class="ai-actions">
+                    <button class="btn btn-secondary btn-sm" id="copyResponseBtn" title="Copy answer to clipboard">
+                        <i class="fa-regular fa-copy"></i>
+                        <span>Copy</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="ai-response-body">
+                <div class="ai-answer-content" id="resAnswer">
+                    {% if result %}
+                        {{ result.generated_response|replace('\n', '<br>')|safe }}
+                    {% else %}
+                        Your answered query will appear here.
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="ai-response-footer">
+                <div class="citation-block">
+                    <span class="citation-label">VERIFIED SOURCE:</span>
+                    <span class="citation-doc" id="resCitation">
+                        <i class="fa-regular fa-file-code"></i> {{ result.retrieved_document if result else 'documents/attendance_policy.txt' }}
+                    </span>
+                </div>
+                <div class="grounding-pill">
+                    <i class="fa-solid fa-shield-check"></i>
+                    <span>100% Grounded Context</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Analytics & Overview Cards -->
+    <section class="dashboard-stats-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon indigo"><i class="fa-solid fa-comments"></i></div>
+                <div class="stat-info">
+                    <span class="stat-label">Total Queries Resolved</span>
+                    <strong class="stat-value">{{ analytics.total_queries }}</strong>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fa-solid fa-bullseye"></i></div>
+                <div class="stat-info">
+                    <span class="stat-label">Avg. Relevance Score</span>
+                    <strong class="stat-value">{{ analytics.avg_relevance_score }}%</strong>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fa-solid fa-book-bookmark"></i></div>
+                <div class="stat-info">
+                    <span class="stat-label">Knowledge Base Docs</span>
+                    <strong class="stat-value">{{ total_kb_docs }} Files</strong>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple"><i class="fa-solid fa-bolt"></i></div>
+                <div class="stat-info">
+                    <span class="stat-label">Avg. AI Latency</span>
+                    <strong class="stat-value">{{ analytics.avg_latency_ms|int }} ms</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+SMART UNIVERSITY COURSE INFORMATION AND CURRICULUM
+
+1. DEGREE PROGRAMS OFFERED
+The Department of Computer Science & Engineering offers cutting-edge undergraduate and postgraduate programs:
+- Bachelor of Technology (B.Tech) in Computer Science & Engineering (4 Years / 8 Semesters / 160 Total Credits).
+- B.Tech in Artificial Intelligence & Machine Learning (4 Years / 8 Semesters / 160 Total Credits).
+- B.Tech in Data Science & Cloud Analytics (4 Years / 8 Semesters / 160 Total Credits).
+- Master of Technology (M.Tech) in AI & Robotics (2 Years / 4 Semesters / 72 Total Credits).
+
+2. CORE COMPUTER SCIENCE SUBJECTS
+- Foundation: Data Structures & Algorithms, Object-Oriented Programming (Python, Java, C++), Discrete Mathematics, Computer Architecture.
+- Systems: Operating Systems, Database Management Systems (SQL & NoSQL), Computer Networks, Compiler Design, Distributed Systems.
+
+3. ARTIFICIAL INTELLIGENCE SPECIALIZATION SUBJECTS
+The AI curriculum focuses on practical and theoretical foundations:
+- Machine Learning Principles (Supervised, Unsupervised, Ensemble Methods)
+- Deep Learning & Neural Networks (CNNs, RNNs, Transformers)
+- Natural Language Processing (NLP) & Large Language Models (LLMs)
+- Generative AI & Retrieval-Augmented Generation (RAG) Architecture
+- Reinforcement Learning & Autonomous Decision Agents
+- Computer Vision and Image Processing
+
+4. ACADEMIC REQUIREMENTS AND CAPSTONE PROJECT
+- Minimum Graduation CGPA: Students must maintain a minimum cumulative grade point average of 5.0 out of 10.0 with no standing backlogs.
+- Major Capstone Project: Mandatory 8-credit industry/research project undertaken in the final year (Semesters 7 and 8) under faculty mentorship.
+- Industrial Internship: Mandatory 8-week internship with an accredited technology company before the 7th semester.
